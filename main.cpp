@@ -51,11 +51,11 @@ class Matrix{
 		Matrix& operator = (const Matrix& obj){
 			if (this != &obj){
 				for (int i = 0; i < this->row; i++){
-					delete[] arr_2d[i];
-					arr_2d[i] = nullptr;
+					delete[] this->arr_2d[i];
+					this->arr_2d[i] = nullptr;
 				}
-				delete[] arr_2d;
-				arr_2d = nullptr;
+				delete[] this->arr_2d;
+				this->arr_2d = nullptr;
 				this->row = obj.row;
 				this->column = obj.column;
 				this->arr_2d = new int*[this->row];
