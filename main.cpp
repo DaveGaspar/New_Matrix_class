@@ -2,15 +2,15 @@
 
 class Matrix{
 	private:
-		int** arr_2d;
-		int row;
-		int column;
+		int m_row;
+		int m_column;
+		int** m_arr_2d;
 	public:
 		Matrix(){
-			row = column = 3;
-			arr_2d = new int*[row];
-			for(int i = 0; i < row; i++){
-				arr_2d[i] = new int[column];
+			m_row = m_column = 3;
+			m_arr_2d = new int*[m_row];
+			for(int i = 0; i < m_row; i++){
+				m_arr_2d[i] = new int[m_column];
 			}
 		}
 
@@ -19,60 +19,86 @@ class Matrix{
 				std::cerr << "Sizes of matrix can't be negative or 0\n";
 				abort();
 			}
-			row = n;
-			column = m;
-			arr_2d = new int*[row];
-			for(int i = 0; i < row; i++){
-				arr_2d[i] = new int[column];
+			m_row = n;
+			m_column = m;
+			m_arr_2d = new int*[m_row];
+			for(int i = 0; i < m_row; i++){
+				m_arr_2d[i] = new int[m_column];
 			}
 		}
 
 		~Matrix(){
-			for(int i = 0; i < row; i++){
-				delete[] arr_2d[i];
-				arr_2d[i] = nullptr;
+			for(int i = 0; i < m_row; i++){
+				delete[] m_arr_2d[i];
+				m_arr_2d[i] = nullptr;
 			}
-			delete[] arr_2d;
-			arr_2d = nullptr;
+			delete[] m_arr_2d;
+			m_arr_2d = nullptr;
 		}
 		
 		Matrix(const Matrix& obj){
-			this->row = obj.row;
-			this->column = obj.column;
-			this->arr_2d = new int*[this->row];
-			for (int i = 0; i < this->row; i++){
-				this->arr_2d[i] = new int[this->column];
-				for (int j = 0; j < column; j++){
-					this->arr_2d[i][j] = obj.arr_2d[i][j];
+			this->m_row = obj.m_row;
+			this->m_column = obj.m_column;
+			this->m_arr_2d = new int*[this->m_row];
+			for (int i = 0; i < this->m_row; i++){
+				this->m_arr_2d[i] = new int[this->m_column];
+				for (int j = 0; j < m_column; j++){
+					this->m_arr_2d[i][j] = obj.m_arr_2d[i][j];
 				}
 			}
 		}
 
 		Matrix& operator = (const Matrix& obj){
 			if (this != &obj){
-				for (int i = 0; i < this->row; i++){
-					delete[] this->arr_2d[i];
-					this->arr_2d[i] = nullptr;
+				for (int i = 0; i < this->m_row; i++){
+					delete[] this->m_arr_2d[i];
+					this->m_arr_2d[i] = nullptr;
 				}
-				delete[] this->arr_2d;
-				this->arr_2d = nullptr;
-				this->row = obj.row;
-				this->column = obj.column;
-				this->arr_2d = new int*[this->row];
-				for (int i = 0; i < this->row; i++){
-					this->arr_2d[i] = new int[this->column];
-					for (int j = 0; j < column; j++){
-						this->arr_2d[i][j] = obj.arr_2d[i][j];
+				delete[] this->m_arr_2d;
+				this->m_arr_2d = nullptr;
+				this->m_row = obj.m_row;
+				this->m_column = obj.m_column;
+				this->m_arr_2d = new int*[this->m_row];
+				for (int i = 0; i < this->m_row; i++){
+					this->m_arr_2d[i] = new int[this->m_column];
+					for (int j = 0; j < m_column; j++){
+						this->m_arr_2d[i][j] = obj.m_arr_2d[i][j];
 					}
 				}
 			}
 			return *this;
 		}
 
+		Matrix(Matrix&& obj)
+			: m_row(obj.m_row), m_column(obj.m_column), m_arr_2d(obj.m_arr_2d)
+		{
+			obj.m_row = 0;
+			obj.m_column = 0;
+			obj.m_arr_2d = nullptr;
+		}
+
+		Matrix& operator=(Matrix&& obj)
+		{
+			if (this != &obj){
+				for (int i = 0; i < this->m_row; i++){
+					delete[] this->m_arr_2d[i];
+				}
+				delete[] this->m_arr_2d;
+				this->m_row = obj.m_row;
+				this->m_column = obj.m_column;
+				this->m_arr_2d = obj.m_arr_2d;
+				obj.m_row = 0;
+				obj.m_column = 0;
+				obj.m_arr_2d = nullptr;
+			}
+			return *this;
+		}
+
+	public:
 		void print(){
-			for (int i = 0; i < row; i++){
-				for (int j = 0; j < column; j++){
-					std::cout << arr_2d[i][j] << "\t";
+			for (int i = 0; i < m_row; i++){
+				for (int j = 0; j < m_column; j++){
+					std::cout << m_arr_2d[i][j] << "\t";
 				}
 				std::cout << std::endl;
 			}
@@ -80,9 +106,9 @@ class Matrix{
 		}
 		
 		void init(){
-			for (int i = 0; i < row; i++){
-				for (int j = 0; j < column; j++){
-					arr_2d[i][j] = rand() % 90 + 10;
+			for (int i = 0; i < m_row; i++){
+				for (int j = 0; j < m_column; j++){
+					m_arr_2d[i][j] = rand() % 90 + 10;
 				}
 			}
 		}
@@ -95,34 +121,45 @@ void delete_and_nullptr(Matrix* obj){
 }
 
 int main(){
-	Matrix* obj_default = new Matrix;
-	obj_default->init();
-	std::cout << "Default constructor\n";
-	obj_default->print();
+	// Matrix* obj_default = new Matrix;
+	// obj_default->init();
+	// std::cout << "Default constructor\n";
+	// obj_default->print();
 
-	int n, m;
-	std::cout << "Row = ";
-	std::cin >> n;
-	std::cout << "Column = ";
-	std::cin >> m;
-	Matrix* obj_parameterized = new Matrix(n,m);
-	obj_parameterized->init();
-	std::cout << "Parameterized constuctor\n";
-	obj_parameterized->print();
+	// int n, m;
+	// std::cout << "Row = ";
+	// std::cin >> n;
+	// std::cout << "Column = ";
+	// std::cin >> m;
+	// Matrix* obj_parameterized = new Matrix(n,m);
+	// obj_parameterized->init();
+	// std::cout << "Parameterized constuctor\n";
+	// obj_parameterized->print();
 
-	Matrix* obj_copy = new Matrix(*obj_default);
-	std::cout << "Copy constuctor\n";
-	obj_copy->print();
+	// Matrix* obj_copy = new Matrix(*obj_default);
+	// std::cout << "Copy constuctor\n";
+	// obj_copy->print();
 
-	Matrix* obj_oper_as = new Matrix;
-	*obj_oper_as = *obj_parameterized;
-	std::cout << "Operator =\n";
-	obj_oper_as->print();
+	// Matrix* obj_oper_as = new Matrix;
+	// *obj_oper_as = *obj_parameterized;
+	// std::cout << "Operator =\n";
+	// obj_oper_as->print();
 
-	delete_and_nullptr(obj_default);
-	delete_and_nullptr(obj_parameterized);
-	delete_and_nullptr(obj_copy);
-	delete_and_nullptr(obj_oper_as);
+	// delete_and_nullptr(obj_default);
+	// delete_and_nullptr(obj_parameterized);
+	// delete_and_nullptr(obj_copy);
+	// delete_and_nullptr(obj_oper_as);
 	
+	Matrix a(3,3);
+	a.init();
+	a.print();
+	Matrix b(7,7);
+	b.init();
+	b.print();
+
+	b = std::move(a);	
+
+	b.print();
+
 	return 0;
 }
